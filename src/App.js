@@ -1,25 +1,23 @@
-import logo from './logo.svg';
 import './App.css';
+import Search from "./components/search/search";
+import CurrentWeather from "./components/currentWeather/currentWeather";
+import {getApiWeather} from "./api/apiWeather";
+import {useState} from "react";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [currentWeather, setCurrentWeather] = useState(null);
+    const handleOnSearchChange = async (searchData) => {
+        const [lat, lon] = searchData.value.split(' - ');
+        const response = await getApiWeather(lat, lon)
+        setCurrentWeather({city: searchData.label, response: response.data});
+    }
+
+    return (
+        <div className="container">
+            <Search onSearchChange={handleOnSearchChange}/>
+            {currentWeather && <CurrentWeather data={currentWeather}/>}
+        </div>
+    );
 }
 
 export default App;
