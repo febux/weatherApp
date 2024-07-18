@@ -1,21 +1,29 @@
 import './App.css';
 import Search from "./components/search/search";
 import CurrentWeather from "./components/currentWeather/currentWeather";
-import {getApiWeather} from "./api/apiWeather";
+import {getApiCurrentWeather, getApiForecastWeather} from "./api/apiWeather";
 import {useState} from "react";
+import ForecastWeather from "./components/forecastWeather/forecastWeather";
 
 function App() {
     const [currentWeather, setCurrentWeather] = useState(null);
+    const [forecastWeather, setForecastWeather] = useState(null);
     const handleOnSearchChange = async (searchData) => {
         const [lat, lon] = searchData.value.split(' - ');
-        const response = await getApiWeather(lat, lon)
-        setCurrentWeather({city: searchData.label, response: response.data});
+        const current_weather_response = await getApiCurrentWeather(lat, lon)
+        const forecast_weather_response = await getApiForecastWeather(lat, lon)
+        console.log(forecast_weather_response)
+        setCurrentWeather({city: searchData.label, response: current_weather_response.data});
+        setForecastWeather({city: searchData.label, response: forecast_weather_response.data});
     }
 
     return (
         <div className="container">
             <Search onSearchChange={handleOnSearchChange}/>
-            {currentWeather && <CurrentWeather data={currentWeather}/>}
+            <div className="weather-container">
+                {currentWeather && <CurrentWeather data={currentWeather}/>}
+                {/*{forecastWeather && <ForecastWeather data={forecastWeather}/>}*/}
+            </div>
         </div>
     );
 }
